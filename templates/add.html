@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add User</title>
+</head>
+<body>
+
+<h2>Add User (API)</h2>
+
+<form id="userForm">
+    <label>Name:</label>
+    <input type="text" id="name" required><br><br>
+
+    <label>Email:</label>
+    <input type="email" id="email" required><br><br>
+
+    <label>Password:</label>
+    <input type="password" id="password" required><br><br>
+
+    <button type="submit">Submit</button>
+</form>
+<h3>Add Skill</h3>
+
+<input id="skill_name" placeholder="Skill Name"><br><br>
+<input id="category" placeholder="Category"><br><br>
+<input id="language" placeholder="Language"><br><br>
+
+<button onclick="addSkill()">Add Skill</button>
+<p id="responseMsg"></p>
+
+<script>
+document.getElementById("userForm").addEventListener("submit", function(e) {
+    e.preventDefault();  // stop page reload
+
+    const data = {
+        name: document.getElementById("name").value,
+        email: document.getElementById("email").value,
+        password: document.getElementById("password").value
+    };
+
+    fetch("http://127.0.0.1:8000/api/add-user/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        document.getElementById("responseMsg").innerText = result.message;
+    })
+    .catch(error => {
+        console.error("Error:", error);
+    });
+});
+</script>
+<button onclick="loadUsers()">Show Users</button>
+<ul id="userList"></ul>
+
+<script>
+function loadUsers() {
+    fetch("http://127.0.0.1:8000/api/users/")
+    .then(res => res.json())
+    .then(data => {
+        let list = document.getElementById("userList");
+        list.innerHTML = "";
+
+        data.forEach(user => {
+            let li = document.createElement("li");
+            li.innerText = user.name + " - " + user.email;
+            list.appendChild(li);
+        });
+    });
+}
+</script>
+<script>
+function addSkill() {
+    fetch("/api/add-skill/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            skill_name: document.getElementById("skill_name").value,
+            category: document.getElementById("category").value,
+            language: document.getElementById("language").value
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert(data.message);
+    });
+}
+</script>
+</body>
+</html>
