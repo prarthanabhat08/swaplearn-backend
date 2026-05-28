@@ -38,7 +38,7 @@ document.getElementById("userForm").addEventListener("submit", function(e) {
         password: document.getElementById("password").value
     };
 
-    fetch("http://127.0.0.1:8000/api/add-user/", {
+    fetch("https://swaplearn-backend.onrender.com/api/add-user/", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -59,7 +59,7 @@ document.getElementById("userForm").addEventListener("submit", function(e) {
 
 <script>
 function loadUsers() {
-    fetch("http://127.0.0.1:8000/api/users/")
+    fetch("https://swaplearn-backend.onrender.com/api/users/")
     .then(res => res.json())
     .then(data => {
         let list = document.getElementById("userList");

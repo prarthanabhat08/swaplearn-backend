@@ -71,8 +71,11 @@ WSGI_APPLICATION = 'mymongoproject.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'djongo',
+        'NAME': 'swaplearn',
+        'CLIENT': {
+            'host': config('MONGO_URL')
+        }
     }
 }
 
