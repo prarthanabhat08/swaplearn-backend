@@ -1,3 +1,5 @@
+from logging import config
+from decouple import config
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -435,7 +437,7 @@ def save_calendar_slots(request):
             slots = data.get('slots')
 
             from pymongo import MongoClient
-            client = MongoClient("mongodb://localhost:27017/")
+            client = MongoClient(config("MONGO_URL"))
             db = client["swaplearn"]
             collection = db["availability"]
 
@@ -459,7 +461,7 @@ def get_calendar_slots(request):
     username = request.GET.get('username')
 
     from pymongo import MongoClient
-    client = MongoClient("mongodb://localhost:27017/")
+    client = MongoClient(config("MONGO_URL"))
     db = client["swaplearn"]
     collection = db["availability"]
 
