@@ -1,5 +1,3 @@
-from logging import config
-from decouple import config
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -11,7 +9,7 @@ from django.db.models import Q
 from django.db.models import Count
 print("RUNNING FROM:", os.getcwd())
 print("CORRECT VIEWS.PY RUNNING ")    
-
+from decouple import config
 
 def home(request):
     return render(request, 'add.html')
@@ -45,10 +43,15 @@ def register(request):
 
 @csrf_exempt
 def api_add_user(request):
-    if request.method == "POST":
-        data = json.loads(request.body)
+    try:
+        print("===== ADD USER HIT =====")
 
-        hashed_password = hashlib.sha256(data.get("password").encode()).hexdigest()
+        data = json.loads(request.body)
+        print("DATA:", data)
+
+        hashed_password = hashlib.sha256(
+            data.get("password").encode()
+        ).hexdigest()
 
         user = User.objects.create(
             full_name=data.get("name"),
@@ -57,17 +60,22 @@ def api_add_user(request):
             password=hashed_password
         )
 
-        UserProfile.objects.create(
-            user=user,
-            username=user.username,
-            credit=10,
-            skills_learn_count=0,
-            skills_teach_count=0
-        )
+        print("USER CREATED:", user.user_id, user.username)
 
-        return JsonResponse({"id": user.user_id})
+        count = User.objects.count()
+        print("TOTAL USERS:", count)
 
-    return JsonResponse({"error": "POST required"}, status=400)
+        return JsonResponse({
+            "success": True,
+            "id": user.user_id
+        })
+
+    except Exception as e:
+        print("ADD USER ERROR:", str(e))
+        return JsonResponse({
+            "success": False,
+            "error": str(e)
+        }, status=500)
 
 
 # ================= LOGIN =================
@@ -436,9 +444,11 @@ def save_calendar_slots(request):
             username = data.get('username')
             slots = data.get('slots')
 
+            from decouple import config
             from pymongo import MongoClient
+
             client = MongoClient(config("MONGO_URL"))
-            db = client["swaplearn"]
+            db = client["swaplearn_database_final"]
             collection = db["availability"]
 
             collection.delete_many({"username": username})
@@ -460,9 +470,11 @@ def save_calendar_slots(request):
 def get_calendar_slots(request):
     username = request.GET.get('username')
 
+    from decouple import config
     from pymongo import MongoClient
+
     client = MongoClient(config("MONGO_URL"))
-    db = client["swaplearn"]
+    db = client["swaplearn_database_final"]
     collection = db["availability"]
 
     data = list(collection.find({"username": username}, {"_id": 0}))
