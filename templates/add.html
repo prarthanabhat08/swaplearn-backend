@@ -38,7 +38,7 @@ document.getElementById("userForm").addEventListener("submit", function(e) {
         password: document.getElementById("password").value
     };
 
-    fetch("https://swaplearn-backend.onrender.com/api/add-user/", {
+    fetch("http://127.0.0.1:8000/api/add-user/", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -59,7 +59,7 @@ document.getElementById("userForm").addEventListener("submit", function(e) {
 
 <script>
 function loadUsers() {
-    fetch("https://swaplearn-backend.onrender.com/api/users/")
+    fetch("http://127.0.0.1:8000/api/users/")
     .then(res => res.json())
     .then(data => {
         let list = document.getElementById("userList");
@@ -75,7 +75,7 @@ function loadUsers() {
 </script>
 <script>
 function addSkill() {
-    fetch("https://swaplearn-backend.onrender.com/api/add-skill/", {
+    fetch("http://127.0.0.1:8000/api/add-skill/", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

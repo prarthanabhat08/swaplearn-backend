@@ -73,7 +73,7 @@ def api_add_user(request):
 
         return JsonResponse({
             "success": True,
-            "id": user.user_id
+            "id": str(user.user_id)
         })
 
     except Exception as e:
@@ -454,7 +454,7 @@ def save_calendar_slots(request):
             from pymongo import MongoClient
 
             client = MongoClient(config("MONGO_URL"))
-            db = client["swaplearn_database_final"]
+            db = client["swaplearn"]
             collection = db["availability"]
 
             collection.delete_many({"username": username})
@@ -479,8 +479,9 @@ def get_calendar_slots(request):
     from decouple import config
     from pymongo import MongoClient
 
+    print("USERNAME RECEIVED:", username)
     client = MongoClient(config("MONGO_URL"))
-    db = client["swaplearn_database_final"]
+    db = client["swaplearn"]
     collection = db["availability"]
 
     data = list(collection.find({"username": username}, {"_id": 0}))
