@@ -65,7 +65,14 @@ def api_add_user(request):
             email=data.get("email"),
             password=hashed_password
         )
-
+        
+        UserProfile.objects.create(
+            user=user,
+            username=user.username,
+            credit=10,
+            skills_learn_count=0,
+            skills_teach_count=0
+        )
         print("USER CREATED:", user.user_id, user.username)
 
         count = User.objects.count()
@@ -517,7 +524,7 @@ def end_session(request):
                 if learner_profile.credit < 3:
                     return JsonResponse({"error": "Not enough credits"}, status=400)
 
-                teacher_profile.credit += 2
+                teacher_profile.credit += 3
                 learner_profile.credit -= 3
 
                 # Optional counters
