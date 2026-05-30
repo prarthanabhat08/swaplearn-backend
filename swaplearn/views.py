@@ -17,7 +17,11 @@ def home(request):
 
 @csrf_exempt
 def register(request):
+    print("REGISTER FUNCTION CALLED")
+
     if request.method == "POST":
+        print("POST REQUEST RECEIVED")
+
         raw_password = request.POST.get("password")
         hashed_password = hashlib.sha256(raw_password.encode()).hexdigest()
 
@@ -35,7 +39,9 @@ def register(request):
             skills_learn_count=0,
             skills_teach_count=0
         )
-       
+
+        print("USER SAVED")
+
         return render(request, 'success.html')
 
     return JsonResponse({"error": "POST required"}, status=400)

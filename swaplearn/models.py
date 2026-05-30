@@ -95,13 +95,13 @@ class UserFullData(models.Model):
     teach_skills = models.JSONField()
     learn_skills = models.JSONField()
     
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        UserProfile.objects.create(
-            user=instance,
-            username=instance.username,
-            credit=10,
-            skills_learn_count=0,
-            skills_teach_count=0
-        )
+#@receiver(post_save, sender=User)
+#def create_user_profile(sender, instance, created, **kwargs):
+#   if created:
+#       UserProfile.objects.create(
+#          user=instance,
+#         username=instance.username,
+#        credit=10,
+#       skills_learn_count=0,
+#      skills_teach_count=0
+#        )
