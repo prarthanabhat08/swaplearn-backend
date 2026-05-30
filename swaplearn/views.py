@@ -97,12 +97,13 @@ def api_login(request):
             password=hashed_password
         ).first()
 
-        if user:
-            return JsonResponse({
-                "status": "success",
-                "user_id": user.user_id,
-                "name": user.full_name
-            })
+        return JsonResponse({
+            "status": "success",
+            "user_id": user.user_id,
+            "username": user.username,
+            "name": user.full_name,
+            "email": user.email
+        })
 
         return JsonResponse({"status": "error"})
 
