@@ -32,7 +32,7 @@ urlpatterns = [
     path('api/save_calendar_slots/', views.save_calendar_slots),
     path('api/get_calendar_slots/', views.get_calendar_slots),
     
-    path('end-session/', views.end_session),
+    path('api/end_session/', views.end_session),
     
     path('api/get-profile/<int:user_id>/', views.get_profile),
 ]
