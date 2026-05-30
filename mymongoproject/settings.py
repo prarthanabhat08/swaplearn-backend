@@ -47,7 +47,12 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-ALLOWED_HOSTS = ['192.168.1.4', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+    '192.168.1.4',
+    'swaplearn-backend.onrender.com'
+]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:19006",
