@@ -369,12 +369,20 @@ def discover_users(request, user_id):
     result = []
 
     for u in users:
+
         teach = UserSkill.objects.filter(user=u, skill_type="teach")
         learn = UserSkill.objects.filter(user=u, skill_type="learn")
+
+        try:
+            profile = UserProfile.objects.get(user=u)
+            credits = profile.credit
+        except UserProfile.DoesNotExist:
+            credits = 0
 
         result.append({
             "user_id": u.user_id,
             "name": u.full_name,
+            "credit": credits,
             "teach": [t.skill.skill_name for t in teach],
             "learn": [l.skill.skill_name for l in learn],
         })
