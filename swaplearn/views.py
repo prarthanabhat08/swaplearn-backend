@@ -232,6 +232,7 @@ def get_chats(request, user_id):
                 data.append({
                     "room_id": room.id,
                     "name": other_user.full_name,
+                    "other_user_id": other_user.user_id,
                     "last_message": ""
                 })
 
@@ -504,46 +505,53 @@ from .models import UserProfile
 
 @csrf_exempt
 def end_session(request):
-    if request.method == "POST":
-        data = json.loads(request.body)
 
-        teacher_id = data.get("teacher_id")
-        learner_id = data.get("learner_id")
+    if request.method != "POST":
+        return JsonResponse(
+            {"error": "POST request required"},
+            status=405
+        )
 
-        try:
-            with transaction.atomic():
+    data = json.loads(request.body)
 
-                teacher_profile = UserProfile.objects.get(
-                    user__user_id=teacher_id
+    teacher_id = data.get("teacher_id")
+    learner_id = data.get("learner_id")
+
+    try:
+        with transaction.atomic():
+
+            teacher_profile = UserProfile.objects.get(
+                user__user_id=teacher_id
+            )
+
+            learner_profile = UserProfile.objects.get(
+                user__user_id=learner_id
+            )
+
+            if learner_profile.credit < 3:
+                return JsonResponse(
+                    {"error": "Not enough credits"},
+                    status=400
                 )
 
-                learner_profile = UserProfile.objects.get(
-                    user__user_id=learner_id
-                )
+            teacher_profile.credit += 3
+            learner_profile.credit -= 3
 
-                if learner_profile.credit < 3:
-                    return JsonResponse({"error": "Not enough credits"}, status=400)
+            teacher_profile.skills_teach_count += 1
+            learner_profile.skills_learn_count += 1
 
-                teacher_profile.credit += 3
-                learner_profile.credit -= 3
+            teacher_profile.save()
+            learner_profile.save()
 
-                # Optional counters
-                teacher_profile.skills_teach_count += 1
-                learner_profile.skills_learn_count += 1
+        return JsonResponse({
+            "message": "Credits updated"
+        })
 
-                teacher_profile.save()
-                learner_profile.save()
-
-            return JsonResponse({
-                "message": "Credits updated",
-                "teacher_credit": teacher_profile.credit,
-                "learner_credit": learner_profile.credit,
-                "teacher_taught_count": teacher_profile.skills_teach_count,
-                "learner_learned_count": learner_profile.skills_learn_count
-            })
-
-        except UserProfile.DoesNotExist:
-            return JsonResponse({"error": "Profile not found"}, status=404)
+    except UserProfile.DoesNotExist:
+        return JsonResponse(
+            {"error": "Profile not found"},
+            status=404
+        )
         
 def get_profile(request, user_id):
 
